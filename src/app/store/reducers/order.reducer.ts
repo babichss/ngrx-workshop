@@ -1,45 +1,39 @@
-import { Action, createFeatureSelector, createSelector } from '@ngrx/store';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { IOrder } from '../../models/order.interface';
-import { TraderSide } from '../../enum/trader-side.enum';
 import { OrderActionTypes, OrderActions } from '../actions/order.actions';
+import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+import { TraderSide } from 'src/app/enum/trader-side.enum';
 
+export interface State extends EntityState<IOrder> { }
 
-export interface State {
-	orders: IOrder[];
-}
-
-export const initialState: State = {
-	orders: [{
-		id: '1',
-		periodId: '1',
-		productId: '1',
-		price: 100,
-		volume: 2000,
-		side: TraderSide.Ask
-	}, {
-		id: '2',
-		periodId: '1',
-		productId: '2',
-		price: 10,
-		volume: 1000,
-		side: TraderSide.Bid
-	}]
-};
+const adapter: EntityAdapter<IOrder> = createEntityAdapter<IOrder>();
+const initialState: State = adapter.addMany([{
+	id: '1',
+	periodId: '1',
+	productId: '1',
+	price: 100,
+	volume: 2000,
+	side: TraderSide.Ask
+}, {
+	id: '2',
+	periodId: '1',
+	productId: '2',
+	price: 10,
+	volume: 1000,
+	side: TraderSide.Bid
+}], adapter.getInitialState({}));
 
 export function reducer(state = initialState, action: OrderActions): State {
 	switch (action.type) {
 		case OrderActionTypes.AddOrder:
-			return { ...state, orders: [...state.orders, action.payload.order] };
+			return adapter.addOne(action.payload.order, state);
 		case OrderActionTypes.RemoveOrder:
-			return { ...state, orders: state.orders.filter(({ id }) => id !== action.payload.orderId) };
+			return adapter.removeOne(action.payload.orderId, state);
 		default:
 			return state;
 	}
 }
 
-const feature = createFeatureSelector<State>('order');
-
-export const selectAllOrders = createSelector(
-	feature,
-	({ orders }) => orders
-);
+export const {
+	selectAll: selectAllOrders
+} = adapter.getSelectors(createFeatureSelector('order'));
