@@ -3,12 +3,12 @@ import { IGridRow } from '../models/watchlist-grid-row.interface';
 import { IOrder } from '../models/order.interface';
 import { Store, select } from '@ngrx/store';
 import { State } from '../store/reducers';
-import { combineLatest, Subscription } from 'rxjs';
+import { combineLatest, Subscription, Subject } from 'rxjs';
 import { selectAllInstruments } from '../store/reducers/instrument.reducer';
 import { selectAllOrders } from '../store/reducers/order.reducer';
 import { selectAllProducts } from '../store/reducers/product.reducer';
 import { selectAllPeriods } from '../store/reducers/period.reducer';
-import { map } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { TraderSide } from '../enum/trader-side.enum';
 import { TradeOrder } from '../store/actions/order.actions';
 
@@ -30,17 +30,18 @@ export class GridComponent implements OnDestroy {
 		'bid2'
 	];
 
-	private subscriptions: Subscription[] = [];
+	readonly destroy$: Subject<undefined> = new Subject();
 
 	constructor(
 		readonly store: Store<State>
 	) {
-		this.subscriptions.push(combineLatest(
+		combineLatest(
 			this.store.pipe(select(selectAllInstruments)),
 			this.store.pipe(select(selectAllOrders)),
 			this.store.pipe(select(selectAllProducts)),
 			this.store.pipe(select(selectAllPeriods))
 		).pipe(
+			takeUntil(this.destroy$),
 			map(([instruments, orders, products, periods]) => instruments.map<IGridRow>(instrument => {
 				const instrumentOrders = orders
 					.filter(({ productId, periodId }) => (
@@ -60,7 +61,7 @@ export class GridComponent implements OnDestroy {
 					periodName: period.name
 				};
 			}))
-		).subscribe(data => this.data = data));
+		).subscribe(data => this.data = data);
 	}
 
 	trade(order: IOrder) {
@@ -68,7 +69,8 @@ export class GridComponent implements OnDestroy {
 	}
 
 	ngOnDestroy() {
-		this.subscriptions.forEach(subscription => subscription.unsubscribe());
+		this.destroy$.next();
+		this.destroy$.unsubscribe();
 	}
 }
 
