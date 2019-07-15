@@ -1,9 +1,9 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { IGridRow } from '../models/watchlist-grid-row.interface';
 import { IOrder } from '../models/order.interface';
 import { Store, select } from '@ngrx/store';
 import { State } from '../store/reducers';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import { selectAllInstruments } from '../store/reducers/instrument.reducer';
 import { selectAllOrders } from '../store/reducers/order.reducer';
 import { selectAllProducts } from '../store/reducers/product.reducer';
@@ -17,7 +17,7 @@ import { TradeOrder } from '../store/actions/order.actions';
 	templateUrl: './watchlist-grid.component.html',
 	styleUrls: ['./watchlist-grid.component.scss']
 })
-export class GridComponent {
+export class GridComponent implements OnDestroy {
 	public data: IGridRow[];
 	readonly columnIds = [
 		'product',
@@ -30,10 +30,12 @@ export class GridComponent {
 		'bid2'
 	];
 
+	private subscription: Subscription = new Subscription();
+
 	constructor(
 		readonly store: Store<State>
 	) {
-		combineLatest(
+		this.subscription.add(combineLatest(
 			this.store.pipe(select(selectAllInstruments)),
 			this.store.pipe(select(selectAllOrders)),
 			this.store.pipe(select(selectAllProducts)),
@@ -58,11 +60,15 @@ export class GridComponent {
 					periodName: period.name
 				};
 			}))
-		).subscribe(data => this.data = data);
+		).subscribe(data => this.data = data));
 	}
 
 	trade(order: IOrder) {
 		this.store.dispatch(new TradeOrder({ order }));
+	}
+
+	ngOnDestroy() {
+		this.subscription.unsubscribe();
 	}
 }
 
