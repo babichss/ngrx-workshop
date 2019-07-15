@@ -1,11 +1,6 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { IGridRow } from '../models/watchlist-grid-row.interface';
 import { IOrder } from '../models/order.interface';
-import { Store, select } from '@ngrx/store';
-import { State } from '../store/reducers';
-import { Observable } from 'rxjs';
-import { TradeOrder } from '../store/actions/order.actions';
-import { getWatchGridData } from '../store/selectors/selectors';
 
 @Component({
 	selector: 'app-watchlist-grid',
@@ -14,6 +9,9 @@ import { getWatchGridData } from '../store/selectors/selectors';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GridComponent {
+	@Input() data: IGridRow[] = [];
+	@Output() trade: EventEmitter<IOrder> = new EventEmitter();
+
 	readonly columnIds = [
 		'product',
 		'ask2',
@@ -24,18 +22,6 @@ export class GridComponent {
 		'bid1',
 		'bid2'
 	];
-
-	readonly data$: Observable<IGridRow[]> = this.store.pipe(
-		select(getWatchGridData)
-	);
-
-	constructor(
-		readonly store: Store<State>
-	) { }
-
-	trade(order: IOrder) {
-		this.store.dispatch(new TradeOrder({ order }));
-	}
 }
 
 

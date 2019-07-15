@@ -1,4 +1,4 @@
-<table mat-table [dataSource]="data$ | async" class="mat-elevation-z1">
+<table mat-table [dataSource]="data" class="mat-elevation-z1">
 	<ng-container cdkColumnDef="product">
 		<th mat-header-cell *cdkHeaderCellDef> Product </th>
 		<td mat-cell *cdkCellDef="let row"> {{row.productName}} {{row.periodName}}</td>
@@ -8,7 +8,7 @@
 		<th mat-header-cell *cdkHeaderCellDef> Ask {{i + 1}} </th>
 		<td mat-cell *cdkCellDef="let row" class="ask-cell">
 			<ng-container *ngIf="row['ask' + i] as order">
-				<button mat-icon-button (click)="trade(order)"><mat-icon>archive</mat-icon></button>
+				<button mat-icon-button (click)="trade.emit(order)"><mat-icon>archive</mat-icon></button>
 				<b>{{order.price | number:'1.2-2'}}</b>/{{order.volume}}
 			</ng-container>
 		</td>
@@ -23,7 +23,7 @@
 		<th mat-header-cell *cdkHeaderCellDef> Bid {{i}} </th>
 		<td mat-cell *cdkCellDef="let row" class="bid-cell">
 			<ng-container *ngIf="row['bid' + i] as order">
-				<button mat-icon-button (click)="trade(order)"><mat-icon>unarchive</mat-icon></button>
+				<button mat-icon-button (click)="trade.emit(order)"><mat-icon>unarchive</mat-icon></button>
 				<b>{{order.price | number:'1.2-2'}}</b>/{{order.volume}}
 			</ng-container>
 		</td>

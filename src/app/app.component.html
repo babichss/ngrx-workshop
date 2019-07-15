@@ -1,9 +1,12 @@
 <mat-tab-group>
 	<mat-tab label="Watchlist">
-		<app-watchlist-grid></app-watchlist-grid>
+		<app-watchlist-grid	
+			[data]="watchListData$ | async"
+			(trade)="onTrade($event)"></app-watchlist-grid>
 		<app-dialog (onsubmit)="onNewOrderSubmit($event)"></app-dialog>
 	</mat-tab>
 	<mat-tab label="Trades">
-		<app-trades-grid></app-trades-grid>
+		<app-trades-grid
+			[data]="tradeGridData$ | async"></app-trades-grid>
 	</mat-tab>
 </mat-tab-group>
