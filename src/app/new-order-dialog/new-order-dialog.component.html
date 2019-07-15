@@ -3,14 +3,14 @@
 	<mat-form-field>
 		<mat-label>Product</mat-label>
 		<mat-select required [formControl]="productCtrl">
-			<mat-option *ngFor="let product of products" value="{{product.id}}">{{product.name}}</mat-option>
+			<mat-option *ngFor="let product of products$ | async" value="{{product.id}}">{{product.name}}</mat-option>
 		</mat-select>
 	</mat-form-field>
 
 	<mat-form-field>
 		<mat-label>Period</mat-label>
 		<mat-select required [formControl]="periodCtrl">
-			<mat-option *ngFor="let period of periods" value="{{period.id}}">{{period.name}}</mat-option>
+			<mat-option *ngFor="let period of periods$ | async" value="{{period.id}}">{{period.name}}</mat-option>
 		</mat-select>
 	</mat-form-field>
 

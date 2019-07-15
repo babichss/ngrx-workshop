@@ -1,24 +1,24 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { IGridRow } from '../models/watchlist-grid-row.interface';
 import { IOrder } from '../models/order.interface';
 import { Store, select } from '@ngrx/store';
 import { State } from '../store/reducers';
-import { combineLatest, Subscription, Subject } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { selectAllInstruments } from '../store/reducers/instrument.reducer';
 import { selectAllOrders } from '../store/reducers/order.reducer';
 import { selectAllProducts } from '../store/reducers/product.reducer';
 import { selectAllPeriods } from '../store/reducers/period.reducer';
-import { map, takeUntil } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { TraderSide } from '../enum/trader-side.enum';
 import { TradeOrder } from '../store/actions/order.actions';
 
 @Component({
 	selector: 'app-watchlist-grid',
 	templateUrl: './watchlist-grid.component.html',
-	styleUrls: ['./watchlist-grid.component.scss']
+	styleUrls: ['./watchlist-grid.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GridComponent implements OnDestroy {
-	public data: IGridRow[];
+export class GridComponent {
 	readonly columnIds = [
 		'product',
 		'ask2',
@@ -30,47 +30,39 @@ export class GridComponent implements OnDestroy {
 		'bid2'
 	];
 
-	readonly destroy$: Subject<undefined> = new Subject();
+	readonly data$: Observable<IGridRow[]> = combineLatest(
+		this.store.pipe(select(selectAllInstruments)),
+		this.store.pipe(select(selectAllOrders)),
+		this.store.pipe(select(selectAllProducts)),
+		this.store.pipe(select(selectAllPeriods))
+	).pipe(
+		map(([instruments, orders, products, periods]) => instruments.map<IGridRow>(instrument => {
+			const instrumentOrders = orders.filter(({ productId, periodId }) => (
+				productId === instrument.productId &&
+				periodId === instrument.periodId
+			));
+
+			const product = products.find(({ id }) => id === instrument.productId);
+			const period = periods.find(({ id }) => id === instrument.periodId);
+
+			return {
+				...instrument,
+				...getOrders(instrumentOrders, 'ask', TraderSide.Ask),
+				...getOrders(instrumentOrders, 'bid', TraderSide.Bid),
+				lastTradePrice: 0,
+				productName: product.name,
+				periodName: period.name
+			};
+		}))
+	);
 
 	constructor(
 		readonly store: Store<State>
 	) {
-		combineLatest(
-			this.store.pipe(select(selectAllInstruments)),
-			this.store.pipe(select(selectAllOrders)),
-			this.store.pipe(select(selectAllProducts)),
-			this.store.pipe(select(selectAllPeriods))
-		).pipe(
-			takeUntil(this.destroy$),
-			map(([instruments, orders, products, periods]) => instruments.map<IGridRow>(instrument => {
-				const instrumentOrders = orders
-					.filter(({ productId, periodId }) => (
-						productId === instrument.productId &&
-						periodId === instrument.periodId
-					));
-
-				const product = products.find(({ id }) => id === instrument.productId);
-				const period = periods.find(({ id }) => id === instrument.periodId);
-
-				return {
-					...instrument,
-					...getOrders(instrumentOrders, 'ask', TraderSide.Ask),
-					...getOrders(instrumentOrders, 'bid', TraderSide.Bid),
-					lastTradePrice: 0,
-					productName: product.name,
-					periodName: period.name
-				};
-			}))
-		).subscribe(data => this.data = data);
 	}
 
 	trade(order: IOrder) {
 		this.store.dispatch(new TradeOrder({ order }));
-	}
-
-	ngOnDestroy() {
-		this.destroy$.next();
-		this.destroy$.unsubscribe();
 	}
 }
 

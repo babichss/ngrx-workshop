@@ -7,7 +7,7 @@ import { Store, select } from '@ngrx/store';
 import { selectAllProducts } from '../store/reducers/product.reducer';
 import { IPeriod } from '../models/period.interface';
 import { selectAllPeriods } from '../store/reducers/period.reducer';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 
 @Component({
 	selector: 'app-new-order-dialog',
@@ -32,18 +32,10 @@ export class NewOrderDialogComponent {
 		side: this.sideCtrl
 	});
 
-	public products: IProduct[];
-	public periods: IPeriod[];
+	readonly products$: Observable<IProduct[]> = this.store.pipe(select(selectAllProducts));
+	readonly periods$: Observable<IPeriod[]> = this.store.pipe(select(selectAllPeriods));
 
 	constructor(
 		readonly store: Store<State>
-	) {
-		combineLatest(
-			this.store.pipe(select(selectAllProducts)),
-			this.store.pipe(select(selectAllPeriods))
-		).subscribe(([products, periods]) => {
-			this.products = products;
-			this.periods = periods;
-		});
-	}
+	) { }
 }
