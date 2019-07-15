@@ -30,12 +30,12 @@ export class GridComponent implements OnDestroy {
 		'bid2'
 	];
 
-	private subscription: Subscription = new Subscription();
+	private subscriptions: Subscription[] = [];
 
 	constructor(
 		readonly store: Store<State>
 	) {
-		this.subscription.add(combineLatest(
+		this.subscriptions.push(combineLatest(
 			this.store.pipe(select(selectAllInstruments)),
 			this.store.pipe(select(selectAllOrders)),
 			this.store.pipe(select(selectAllProducts)),
@@ -68,7 +68,7 @@ export class GridComponent implements OnDestroy {
 	}
 
 	ngOnDestroy() {
-		this.subscription.unsubscribe();
+		this.subscriptions.forEach(subscription => subscription.unsubscribe());
 	}
 }
 

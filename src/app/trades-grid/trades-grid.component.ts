@@ -21,12 +21,12 @@ export class TradesGridComponent implements OnDestroy {
 
 	public data: ITradeGridRow[];
 
-	private subscription: Subscription = new Subscription();
+	private subscriptions: Subscription[] = [];
 
 	constructor(
 		readonly store: Store<State>
 	) {
-		this.subscription.add(combineLatest(
+		this.subscriptions.push(combineLatest(
 			this.store.pipe(select(selectAllTrades)),
 			this.store.pipe(select(selectAllProducts)),
 			this.store.pipe(select(selectAllPeriods))
@@ -42,6 +42,6 @@ export class TradesGridComponent implements OnDestroy {
 	}
 
 	ngOnDestroy() {
-		this.subscription.unsubscribe();
+		this.subscriptions.forEach(subscription => subscription.unsubscribe());
 	}
 }
