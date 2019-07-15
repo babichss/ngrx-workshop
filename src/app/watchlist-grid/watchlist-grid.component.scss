@@ -1,0 +1,21 @@
+:host {
+  width: 100%;
+
+  table {
+    width: 100%;
+    table-layout: fixed;
+  }
+}
+
+.ask-cell {
+  color: #1976D2;
+}
+
+.bid-cell {
+  color: #D32F2F;
+}
+
+.last-trade-cell {
+	color: #AD1457;
+	font-weight: bold;
+}

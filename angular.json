@@ -7,7 +7,9 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "spec": false,
+          "changeDetection": "OnPush"
         }
       },
       "root": "",
@@ -119,6 +121,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "ng-tricks"
+    }
+  },
+  "defaultProject": "ng-tricks",
+  "cli": {
+    "defaultCollection": "@ngrx/schematics"
+  }
 }

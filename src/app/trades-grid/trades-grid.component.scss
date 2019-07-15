@@ -1,0 +1,16 @@
+:host {
+  width: 100%;
+
+  table {
+    width: 100%;
+    table-layout: fixed;
+  }
+}
+
+.ask-row .mat-cell {
+  color: #1976D2;
+}
+
+.bid-row .mat-cell {
+  color: #D32F2F;
+}

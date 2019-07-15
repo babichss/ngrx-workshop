@@ -1,0 +1,30 @@
+<table mat-table [dataSource]="data" class="mat-elevation-z1">
+	<ng-container cdkColumnDef="product">
+		<th mat-header-cell *cdkHeaderCellDef> Product </th>
+		<td mat-cell *cdkCellDef="let row">{{row.productName}} {{row.periodName}}</td>
+	</ng-container>
+
+	<ng-container cdkColumnDef="time">
+		<th mat-header-cell *cdkHeaderCellDef> Time </th>
+		<td mat-cell *cdkCellDef="let row">{{row.time | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
+	</ng-container>
+
+	<ng-container cdkColumnDef="price">
+		<th mat-header-cell *cdkHeaderCellDef> Price </th>
+		<td mat-cell *cdkCellDef="let row">{{row.price}}</td>
+	</ng-container>
+
+	<ng-container cdkColumnDef="volume">
+		<th mat-header-cell *cdkHeaderCellDef> Volume </th>
+		<td mat-cell *cdkCellDef="let row">{{row.volume}}</td>
+	</ng-container>
+
+	<!-- Header and Row Declarations -->
+	<tr mat-header-row *cdkHeaderRowDef="columnIds; sticky: true"></tr>
+	<tr mat-row
+		*cdkRowDef="let row; columns: columnIds"
+		[ngClass]="{
+			'ask-row': row.side === side.Ask,
+			'bid-row': row.side === side.Bid
+		}"></tr>
+</table>

@@ -1,0 +1,35 @@
+<table mat-table [dataSource]="data" class="mat-elevation-z1">
+	<ng-container cdkColumnDef="product">
+		<th mat-header-cell *cdkHeaderCellDef> Product </th>
+		<td mat-cell *cdkCellDef="let row"> {{row.productName}} {{row.periodName}}</td>
+	</ng-container>
+
+	<ng-container *ngFor="let x of [1,2,3]; let i = index;" cdkColumnDef="ask{{i}}">
+		<th mat-header-cell *cdkHeaderCellDef> Ask {{i + 1}} </th>
+		<td mat-cell *cdkCellDef="let row" class="ask-cell">
+			<ng-container *ngIf="row['ask' + i] as order">
+				<button mat-icon-button (click)="trade(order)"><mat-icon>archive</mat-icon></button>
+				<b>{{order.price | number:'1.2-2'}}</b>/{{order.volume}}
+			</ng-container>
+		</td>
+	</ng-container>
+
+	<ng-container cdkColumnDef="lastTradePrice">
+		<th mat-header-cell *cdkHeaderCellDef> Last Price </th>
+		<td mat-cell *cdkCellDef="let row" class="last-trade-cell"> {{row.lastTradePrice | number:'1.2-2'}} </td>
+	</ng-container>
+
+	<ng-container *ngFor="let x of [1,2,3]; let i = index;" cdkColumnDef="bid{{i}}">
+		<th mat-header-cell *cdkHeaderCellDef> Bid {{i}} </th>
+		<td mat-cell *cdkCellDef="let row" class="bid-cell">
+			<ng-container *ngIf="row['bid' + i] as order">
+				<button mat-icon-button (click)="trade(order)"><mat-icon>unarchive</mat-icon></button>
+				<b>{{order.price | number:'1.2-2'}}</b>/{{order.volume}}
+			</ng-container>
+		</td>
+	</ng-container>
+
+	<!-- Header and Row Declarations -->
+	<tr mat-header-row *cdkHeaderRowDef="columnIds; sticky: true"></tr>
+	<tr mat-row *cdkRowDef="let row; columns: columnIds"></tr>
+</table>

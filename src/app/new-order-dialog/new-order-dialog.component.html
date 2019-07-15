@@ -1,0 +1,41 @@
+<h1 mat-dialog-title>Place new order</h1>
+<div mat-dialog-content>
+	<mat-form-field>
+		<mat-label>Product</mat-label>
+		<mat-select required [formControl]="productCtrl">
+			<mat-option *ngFor="let product of products" value="{{product.id}}">{{product.name}}</mat-option>
+		</mat-select>
+	</mat-form-field>
+
+	<mat-form-field>
+		<mat-label>Period</mat-label>
+		<mat-select required [formControl]="periodCtrl">
+			<mat-option *ngFor="let period of periods" value="{{period.id}}">{{period.name}}</mat-option>
+		</mat-select>
+	</mat-form-field>
+
+	<div class="form-row">
+		<div class="form-row-col">
+			<mat-form-field>
+				<mat-label>Price</mat-label>
+				<input matInput type="number" [formControl]="priceCtrl">
+			</mat-form-field>
+		</div>
+		<div class="form-row-col">
+			<mat-form-field>
+				<mat-label>Volume</mat-label>
+				<input matInput type="number" [formControl]="volumeCtrl">
+			</mat-form-field>
+		</div>
+	</div>
+	<div class="form-row">
+		<mat-button-toggle-group [formControl]="sideCtrl">
+			<mat-button-toggle [value]="side.Ask">Buy</mat-button-toggle>
+			<mat-button-toggle [value]="side.Bid">Sell</mat-button-toggle>
+		</mat-button-toggle-group>
+	</div>
+</div>
+<div mat-dialog-actions align="end">
+	<button mat-button>Cancel</button>
+	<button mat-button cdkFocusInitial [disabled]="!form.valid" [mat-dialog-close]="form.value">Submit</button>
+</div>
