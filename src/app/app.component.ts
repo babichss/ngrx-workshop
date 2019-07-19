@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { State } from 'src/app/store/reducers';
-import { CreateOrder, TradeOrder } from 'src/app/store/actions/order.actions';
+import { createOrder, tradeOrder } from 'src/app/store/actions/order.actions';
 import { IOrder } from 'src/app/models/order.interface';
 import { getWatchGridData, getTradeGridData } from './store/selectors/selectors';
 import { Observable } from 'rxjs';
@@ -27,10 +27,11 @@ export class AppComponent {
 	) { }
 
 	onNewOrderSubmit(order: IOrder) {
-		this.store.dispatch(new CreateOrder({ order }));
+		// this.store.dispatch(new CreateOrder({ order }));
+		this.store.dispatch(createOrder(order));
 	}
 
 	onTrade(order: IOrder) {
-		this.store.dispatch(new TradeOrder({ order }));
+		this.store.dispatch(tradeOrder(order));
 	}
 }

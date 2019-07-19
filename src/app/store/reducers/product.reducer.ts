@@ -1,4 +1,4 @@
-import { Action, createFeatureSelector } from '@ngrx/store';
+import { Action, createFeatureSelector, createReducer } from '@ngrx/store';
 import { IProduct } from 'src/app/models/product.interface';
 import { EntityState, createEntityAdapter, EntityAdapter } from '@ngrx/entity';
 
@@ -14,12 +14,7 @@ export const initialState: State = adapter.addMany([
 	adapter.getInitialState()
 );
 
-export function reducer(state = initialState, action: Action): State {
-	switch (action.type) {
-		default:
-			return state;
-	}
-}
+export const reducer = createReducer(initialState);
 
 const feature = createFeatureSelector<State>('product');
 

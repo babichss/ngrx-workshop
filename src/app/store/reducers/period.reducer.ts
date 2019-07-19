@@ -1,4 +1,4 @@
-import { Action, createFeatureSelector, createSelector } from '@ngrx/store';
+import { createFeatureSelector, createReducer } from '@ngrx/store';
 import { IPeriod } from 'src/app/models/period.interface';
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
@@ -14,12 +14,7 @@ export const initialState: State = adapter.addMany([
 	adapter.getInitialState()
 );
 
-export function reducer(state = initialState, action: Action): State {
-	switch (action.type) {
-		default:
-			return state;
-	}
-}
+export const reducer = createReducer(initialState);
 
 const feature = createFeatureSelector<State>('period');
 

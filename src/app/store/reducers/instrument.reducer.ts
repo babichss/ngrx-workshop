@@ -1,4 +1,4 @@
-import { Action, createFeatureSelector, createSelector } from '@ngrx/store';
+import { createFeatureSelector, createReducer } from '@ngrx/store';
 import { IInstrument } from '../../models/instrument.interface';
 import { EntityAdapter, createEntityAdapter, EntityState } from '@ngrx/entity';
 
@@ -27,12 +27,8 @@ export const initialState: State = adapter.addMany([{
 	adapter.getInitialState()
 );
 
-export function reducer(state = initialState, action: Action): State {
-	switch (action.type) {
-		default:
-			return state;
-	}
-}
+export const reducer = createReducer(initialState);
+
 const feature = createFeatureSelector<State>('instrument');
 
 export const {
